@@ -1,29 +1,37 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <header>
+      <Header class="vpay-header"></Header>
+    </header>
+    <main class="vpay-">
+      <router-view/>
+    </main>
+
   </div>
 </template>
-
+<script>
+    import Header from "@/components/Header.vue";
+    export default {
+        name: 'App',
+        components: {
+            Header
+        }
+    }
+</script>
 <style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
+  #app{
+    display:flex;
+    flex-direction: column;
+    align-content: space-between;
+    height:100vh;
+    header{
+      height:1.733rem;
+      text-align: center;
+      line-height: 1.73rem;
+      font-size:0.48rem;
+    }
+    main{
+      flex-grow:5;
     }
   }
-}
 </style>
