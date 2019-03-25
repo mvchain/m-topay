@@ -14,6 +14,7 @@
 <style lang="scss">
     @import '../views/variable';
     .vpay-header{
+        background:#fff;
         & span{
             position: relative;
             bottom:-0.2rem;
