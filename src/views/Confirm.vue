@@ -3,22 +3,39 @@
         <div class="container-main">
             <div class="confirm-top">
                 <p class="confirm-top-title">充值金额</p>
-                <p class="confirm-top-balance">1234.567CNY</p>
-                <p class="confirm-top-bottom">≈ 123123.123USDT</p>
+                <p class="confirm-top-balance">{{orderInfo.tokenValue}}{{orderInfo.tokenName}}</p>
+                <p class="confirm-top-bottom">≈ {{orderInfo.amount}}USDT</p>
             </div>
             <div class="confirm-middle">下单后，如退出购买页面，下次点击充值会继续进行本次未结束充值订单</div>
         </div>
 
         <div>
-            <div class="container-btn" @click="$router.push('order')">确认下单</div>
+            <div class="container-btn" @click="createOrder">确认下单</div>
         </div>
     </div>
 
 </template>
 
 <script>
+    import { mapGetters } from 'vuex';
     export default {
-        name: 'confirm'
+        name: 'confirm',
+        computed: {
+            ...mapGetters({
+                orderInfo: 'orderInfo',
+            })
+        },
+        methods: {
+            createOrder() {
+                this.$router.push('order')
+                return;
+                this.$store.dispatch('postOrder', this.orderInfo).then((res) => {
+                    this.$router.push('order')
+                }).catch((err) => {
+                    console.log(err)
+                })
+            }
+        }
     }
 </script>
 

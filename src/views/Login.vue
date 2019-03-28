@@ -2,28 +2,84 @@
     <div class="login container">
         <div class="container-main">
             <div style="margin-bottom:0.32rem;">
-                <div><input type="tel" class="login-input" placeholder="输入手机号"></div>
-                <p>请输入手机号码</p>
+                <div><input v-model="cellphone" type="tel" class="login-input" placeholder="输入手机号"></div>
+                <p>{{cellphoneError}}</p>
             </div>
             <div>
                 <div style="position: relative;line-height: 1.29rem;">
-                    <input type="number" class="login-input" placeholder="输入验证码">
-                    <span class="login-code" style="line-height: 1.4rem;">获取验证码</span>
+                    <input type="number" v-model="validCode" class="login-input" placeholder="输入验证码">
+                    <span class="login-code" style="line-height: 1.4rem;" @click="countDown">{{validateTxt}}</span>
                 </div>
-                <p>验证码错误</p>
+                <p>{{codeErrorMsg}}</p>
             </div>
         </div>
         <div class="login-server">
             <span>本服务由Topay提供</span>
         </div>
-        <div class="container-btn" @click="$router.push('confirm')">确 认</div>
+        <!--<div class="container-btn" @click="$router.push('confirm')">确 认</div>-->
+        <div class="container-btn" @click="confirmHandler">确 认</div>
     </div>
 
 </template>
 
 <script>
     export default {
-        name: 'login'
+        name: 'login',
+        data() {
+            return {
+                cellphone: '18868741236',
+                validCode: '372810',
+                codeErrorMsg: '',
+                validateTxt: '发送验证码',
+                totalTime: 30,
+                canClick: true,
+                cellphoneError: ''
+            }
+        },
+        methods: {
+            countDown() {
+                if (!this.canClick) return; //改动的是这两行代码
+                this.getValidateCode()
+                this.canClick = false;
+                this.validateTxt = this.totalTime + 's后重新发送';
+                let clock = window.setInterval(() => {
+                    this.totalTime--;
+                    this.validateTxt = this.totalTime + 's后重新发送';
+                    if (this.totalTime < 0) {
+                        window.clearInterval(clock);
+                        this.validateTxt = '重新发送验证码';
+                        this.totalTime = 10;
+                        this.canClick = true  //这里重新开启
+                    }
+                },1000)
+            },
+            confirmHandler() {
+                if (!this.cellphone.trim()) {
+                    this.cellphoneError = '请输入手机号码';
+                    return;
+                }
+                this.$store.dispatch('Login', {cellphone: this.cellphone, validCode: this.validCode}).then((res) => {
+                    this.$store.dispatch('orderExist', res.token).then((res) => {
+                        console.log(res)
+                        if (res.data === null) {
+                            this.$router.push('confirm')
+                        } else {
+                            this.$router.push('order')
+                        }
+                    }).catch()
+                }).catch((err) => {
+                    this.codeErrorMsg = err
+                })
+            },
+            getValidateCode() {
+                this.$store.dispatch('getValidate', this.cellphone).then((res) => {
+                    this.$confirm({
+                        message: '发送成功',
+                        confirmBtn: '确定'
+                    })
+                }).catch()
+            }
+        }
     }
 </script>
 

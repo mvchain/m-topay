@@ -7,27 +7,29 @@
                     <p>剩余收款时间</p>
                 </div>
                 <div>
-                    <p class="order-top-pay order-top-right">待收款</p>
-                    <p class="order-top-time order-top-right">15分30秒</p>
+                    <p class="order-top-pay order-top-right">{{orderInfo.orderStatus | orderStatusFliter}}</p>
+                    <p class="order-top-time order-top-right">
+                        <count-down :endTime="orderInfo.limitTime"></count-down>
+                    </p>
                 </div>
             </div>
 
             <div class="order-middle">
                 <div>
                     <P>订单金额</P>
-                    <P>订单号</P>
                     <P>卖家</P>
                     <P>单价</P>
                     <P>数量</P>
+                    <P>订单号</P>
                     <P>下单时间</P>
                 </div>
                 <div>
-                    <p class="order-top-right order-top-balance">12345.00CNY</p>
-                    <p class="order-top-right">12344567788</p>
-                    <p class="order-top-right">MAIJIAHAOMA</p>
-                    <p class="order-top-right">123123.00CNY</p>
-                    <p class="order-top-right">12321.USDT</p>
-                    <p class="order-top-right">2019-03-21 18:25:34</p>
+                    <p class="order-top-right order-top-balance">{{orderInfo.amount}} CNY</p>
+                    <p class="order-top-right">{{orderInfo.sellUsername}}</p>
+                    <p class="order-top-right">{{orderInfo.price}} CNY</p>
+                    <p class="order-top-right">{{orderInfo.tokenValue}} {{orderInfo.tokenName}}</p>
+                    <p class="order-top-right">{{orderInfo.orderNumber}}</p>
+                    <p class="order-top-right">{{new Date().toLocaleString()}}</p>
                 </div>
             </div>
             <div class="order-title">选择支付方式</div>
@@ -54,10 +56,20 @@
 </template>
 
 <script>
-    import confirmMixin from '../components/Dialog'
+    import confirmMixin from '../components/Dialog';
+    import { mapGetters } from 'vuex';
+    import countDown from '../components/countDown'
     export default {
         name: 'order-info',
         mixins: [ confirmMixin ],
+        components: {
+            'count-down': countDown
+        },
+        computed: {
+            ...mapGetters({
+                orderInfo: 'orderInfo',
+            })
+        },
         methods: {
             cancelOrder() {
                 this.$confirm({

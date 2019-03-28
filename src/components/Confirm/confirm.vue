@@ -29,7 +29,9 @@
                 this.close().then(this.cancelHandler)
             },
             confirmHandler() {
-                this.onSuccess()
+                if(this.onSuccess !== null) {
+                    this.onSuccess()
+                }
                 this.close()
             }
         }

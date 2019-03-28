@@ -5,7 +5,6 @@ import Login from './views/Login.vue'
 Vue.use(Router)
 
 export default new Router({
-    mode: 'history',
     base: process.env.BASE_URL,
     routes: [
         {
@@ -35,7 +34,7 @@ export default new Router({
         {
             path: '/alipay',
             name: 'alipay',
-            meta: { title: '支付宝付款信息', back: true },
+            meta: { title: '支付宝付款信息' },
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
@@ -53,20 +52,11 @@ export default new Router({
         {
             path: '/bank',
             name: 'bank',
-            meta: { title: '银行卡付款信息', back: true },
+            meta: { title: '银行卡付款信息' },
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
             component: () => import(/* webpackChunkName: "about" */ './views/BankCard.vue')
-        },
-        {
-            path: '/result',
-            name: 'result',
-            meta: { title: '订单信息', back: true },
-            // route level code-splitting
-            // this generates a separate chunk (about.[hash].js) for this route
-            // which is lazy-loaded when the route is visited.
-            component: () => import(/* webpackChunkName: "about" */ './views/PayResult.vue')
         }
     ]
 })
