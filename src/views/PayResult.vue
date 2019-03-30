@@ -3,16 +3,16 @@
         <div class="container-main">
             <div class="result-title" v-if="orderInfo.orderStatus === 2">
                 <div class="flex-left">
-                    <p style="font-weight: 900;font-size:0.5rem;">订单完成充值</p>
+                    <p class="result-title-right1" style="font-weight: 900;font-size:0.5rem;">订单完成充值</p>
                 </div>
 
             </div>
             <div class="result-title" v-else>
                 <div class="flex-left">
-                    <p>购买{{orderInfo.tokenName}}</p>
+                    <p>购买USDT</p>
                 </div>
                 <div class="flex-right">
-                    <p>{{orderInfo.orderStatus | orderStatusFliter}}</p>
+                    <p class="result-title-right">{{orderInfo.orderStatus | orderStatusFliter}}</p>
                 </div>
             </div>
             <div class="result-middle">
@@ -23,16 +23,18 @@
                     <p>单价</p>
                     <p>数量</p>
                     <p>下单时间</p>
-                    <p v-if="orderInfo.orderStatus === 2">完成付款时间</p>
+                    <p v-if="orderInfo.orderStatus === 1 || orderInfo.orderStatus === 2">完成付款时间</p>
+                    <p v-if="orderInfo.orderStatus === 2">交易完成时间</p>
                 </div>
                 <div class="flex-right">
-                    <p>{{orderInfo.tokenValue}}{{orderInfo.tokenName}}</p>
+                    <p class="result-title-right">{{Math.floor(orderInfo.amount * 100) / 100}} CNY</p>
                     <p>{{orderInfo.orderNumber}}</p>
                     <p>{{orderInfo.sellUsername}}</p>
-                    <p>{{orderInfo.price}}</p>
-                    <p>{{orderInfo.amount}}</p>
-                    <p>{{new Date(orderInfo.createdAt).toLocaleString()}}</p>
-                    <p v-if="orderInfo.orderStatus === 2">{{new Date(orderInfo.payAt).toLocaleString()}}</p>
+                    <p>{{Math.floor(orderInfo.price * 100) / 100}} CNY</p>
+                    <p>{{Math.floor(orderInfo.tokenValue * 10000) / 10000}}{{orderInfo.tokenName}}</p>
+                    <p>{{orderInfo.createdAt | timeFormat}}</p>
+                    <p v-if="orderInfo.orderStatus === 1 || orderInfo.orderStatus === 2">{{orderInfo.payAt | timeFormat}}</p>
+                    <p v-if="orderInfo.orderStatus === 2">{{orderInfo.stopAt | timeFormat}}</p>
                 </div>
             </div>
         </div>
@@ -63,6 +65,10 @@
             this.$store.dispatch('getOrderInfo', this.orderInfo.id)
             this.timer = setInterval(() => {
                 if(this.orderInfo.orderStatus === 2) {
+                    this.$confirm({
+                        message: '订单完成充值',
+                        confirmBtn: '确定',
+                    })
                     clearInterval(this.timer)
                 }
                 this.$store.dispatch('getOrderInfo', this.orderInfo.id)
@@ -82,6 +88,7 @@
 <style lang="scss">
     @import '../views/variable';
     .pay-result{
+
         .result-title,
         .result-middle{
             background:#fff;
@@ -93,15 +100,21 @@
             padding:0.4rem;
             line-height: 0.9rem;
             & > div.flex-left{
-                flex: 1;
+                flex: 3;
             }
             & > div.flex-right{
-                flex: 2;
+                flex: 5;
                 text-align: right;
             }
         }
+        & .result-title-right{
+            font-size:0.45rem;
+            color:$importFT-color;
+            font-weight: 900;
+        }
         .result-title{
             line-height: 0.5rem;
+
         }
         .result-middle{}
         .result-btn{
@@ -115,6 +128,11 @@
                 background:#C5C5C5;
                 flex:2;
             }
+        }
+        .result-title-right{
+            font-size:0.45rem;
+            color:$importFT-color;
+            font-weight: 900;
         }
     }
 </style>

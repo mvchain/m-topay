@@ -4,7 +4,7 @@
             <div class="order-top">
                 <div>
                     <p>购买USDT</p>
-                    <p>剩余收款时间</p>
+                    <p>剩余付款时间</p>
                 </div>
                 <div>
                     <p class="order-top-pay order-top-right">{{orderInfo.orderStatus | orderStatusFliter}}</p>
@@ -24,12 +24,12 @@
                     <P>下单时间</P>
                 </div>
                 <div>
-                    <p class="order-top-right order-top-balance">{{orderInfo.amount}} CNY</p>
+                    <p class="order-top-right order-top-balance">{{Math.floor(orderInfo.amount * 100) / 100}} CNY</p>
                     <p class="order-top-right">{{orderInfo.sellUsername}}</p>
-                    <p class="order-top-right">{{orderInfo.price}} CNY</p>
-                    <p class="order-top-right">{{orderInfo.tokenValue}} {{orderInfo.tokenName}}</p>
+                    <p class="order-top-right">{{Math.floor(orderInfo.price * 100) / 100}} CNY</p>
+                    <p class="order-top-right">{{Math.floor(orderInfo.tokenValue * 10000) / 10000}} {{orderInfo.tokenName}}</p>
                     <p class="order-top-right">{{orderInfo.orderNumber}}</p>
-                    <p class="order-top-right">{{new Date().toLocaleString()}}</p>
+                    <p class="order-top-right">{{new Date() | timeFormat}}</p>
                 </div>
             </div>
             <div class="order-title">选择支付方式</div>
@@ -174,7 +174,9 @@
         .order-middle{
             line-height: 0.75rem;
             & .order-top-balance{
-                font-size:0.426667rem;
+                font-size:0.456667rem;
+                font-weight: 900;
+                color: $importFT-color;
             }
         }
         .order-bottom{

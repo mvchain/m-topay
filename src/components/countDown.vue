@@ -54,7 +54,6 @@
         },
         destoryed() {
             clearInterval(this.timer);
-            console.log(0)
         }
     }
 

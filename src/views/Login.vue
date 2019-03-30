@@ -1,17 +1,18 @@
 <template>
     <div class="login container">
         <div class="container-main">
-            <div style="margin-bottom:0.32rem;">
+            <div class="login-input-cellphone">
                 <div><input v-model="cellphone" type="tel" class="login-input" placeholder="输入手机号"></div>
-                <p>{{cellphoneError}}</p>
+
             </div>
+            <p class="error-style">{{cellphoneError}}</p>
             <div>
-                <div style="position: relative;line-height: 1.29rem;">
+                <div  class="login-input-code">
                     <input type="number" v-model="validCode" class="login-input" placeholder="输入验证码">
-                    <span class="login-code" style="line-height: 1.4rem;" @click="countDown">{{validateTxt}}</span>
+                    <span class="login-code"  @click="countDown">{{validateTxt}}</span>
                 </div>
-                <p>{{codeErrorMsg}}</p>
             </div>
+            <p class="error-style">{{codeErrorMsg}}</p>
         </div>
         <div class="login-server">
             <span>本服务由Topay提供</span>
@@ -34,8 +35,8 @@
         },
         data() {
             return {
-                cellphone: '',
-                validCode: '',
+                cellphone: '18806716587',
+                validCode: '555666',
                 codeErrorMsg: '',
                 validateTxt: '发送验证码',
                 totalTime: 30,
@@ -132,6 +133,10 @@
     .login{
         .container-main{
             margin-top: 1.68rem;
+            .error-style{
+                padding:0;
+                margin: 0.3rem 0 !important;
+            }
             .login-input{
                 width:8.93rem;
                 height:1.29rem;
@@ -139,17 +144,27 @@
                 border:0;
                 padding-left:0.4rem;
                 color:$importFT-color;
-                background:rgba(0,0,0,0.05);
+                background:transparent;
                 border-radius:0.32rem;
                 font-size:0.4rem;
             }
-            .login-code{
-                position: absolute;
-                top:0;
-                right:0.5rem;
-                font-size:0.373333rem;
-                color:$footBack-color;
+            .login-input-cellphone,
+            .login-input-code{
+                align-items: center;
+                display: flex;
+                background: rgba(0,0,0,0.05);
+                border-radius:0.32rem;
+                & .login-input{
+                    flex:2;
+                }
+                & .login-code{
+                    flex:1;
+                    text-align: center;
+                    font-size:0.373333rem;
+                    color:$footBack-color;
+                }
             }
+
             & p{
                 font-size:0.3467rem;
                 color:$errorFT-color;

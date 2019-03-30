@@ -15,7 +15,9 @@
         },
         methods: {
             onCopy() {
-
+                this.$message({
+                    message: '复制成功'
+                })
             }
         }
     }

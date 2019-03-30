@@ -3,11 +3,11 @@
         <div class="container-main">
             <div class="alipay-pay">
                 <div class="flex-left">
-                    <p>购买USDT</p>
-                    <p>剩余收款时间</p>
+                    <p>待付款</p>
+                    <p>剩余付款时间</p>
                 </div>
                 <div class="flex-right">
-                    <p  class="alipay-top-pay alipay-top-right">{{orderInfo.tokenValue}}{{orderInfo.tokenName}} <copy-btn :icode="String(orderInfo.tokenValue)"></copy-btn></p>
+                    <p  class="alipay-top-pay alipay-top-right">{{Math.floor(orderInfo.amount * 100) / 100}} CNY <copy-btn :icode="String(orderInfo.amount)"></copy-btn></p>
                     <p class="alipay-top-time alipay-top-right">
                         <count-down :endTime="orderInfo.limitTime"></count-down>
                     </p>
@@ -38,7 +38,10 @@
             <div class="alipay-prompt">请务必输入付款账号，以便进行下一步操作。</div>
         </div>
         <div>
-            <div :class="!payBtnFlag ? 'pay-btn' : ''" class="container-btn" @click="payHandler">确认完成付款</div>
+            <div  class="container-btn pay-foot" >
+                <span class="pay-foot-top" @click="$router.go(-1)">更换支付方式</span>
+                <span @click="payHandler" class="pay-foot-bottom" :class="!payBtnFlag ? 'pay-btn' : ''">确认完成付款</span>
+            </div>
         </div>
     </div>
 </template>
@@ -60,10 +63,10 @@
                 this.$destroy('count-down')
             },
             payAccount(n, o) {
-                if (!n.trim()) {
-                    this.payBtnFlag = false;
-                } else {
+                if (n.trim()) {
                     this.payBtnFlag = true;
+                } else {
+                    this.payBtnFlag = false;
                 }
             }
         },
@@ -119,7 +122,7 @@
 
             .alipay-top-pay{
                 font-size:0.45333rem;
-                color:$errorFT-color;
+                color:$importFT-color;
                 font-weight: 900;
             }
 
@@ -175,6 +178,26 @@
         }
         & .pay-btn{
             background:$normalFT-color !important;
+        }
+        .pay-foot{
+            display: flex;
+            & span{
+                flex:1;
+            }
+            & .pay-foot-top{
+                background:$normalFT-color;
+            }
+            & .pay-foot-bottom{}
+        }
+        .container-btn{
+            display: flex;
+            & span:first-child{
+                background:#fff;
+                color:$footBack-color;
+            }
+            & span{
+                flex:1;
+            }
         }
     }
 </style>

@@ -3,8 +3,8 @@
         <div class="container-main" >
             <div class="confirm-top">
                 <p class="confirm-top-title">充值金额</p>
-                <p class="confirm-top-balance">{{orderInfo.tokenValue}}{{orderInfo.tokenName}}</p>
-                <p class="confirm-top-bottom">≈ {{orderInfo.amount}}USDT</p>
+                <p class="confirm-top-balance">{{Math.floor(orderInfo.amount * 100) / 100 }} CNY</p>
+                <p class="confirm-top-bottom">≈ {{Math.floor(orderInfo.tokenValue * 10000) / 10000}} {{orderInfo.tokenName}}</p>
             </div>
             <div class="confirm-middle">下单后，如退出购买页面，下次点击充值会继续进行本次未结束充值订单</div>
         </div>
@@ -26,7 +26,6 @@
                 orderInfo: 'orderInfo',
             })
         },
-
         methods: {
             createOrder() {
                 this.$store.dispatch('postOrder', this.orderInfo).then((res) => {
