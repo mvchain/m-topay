@@ -100,7 +100,7 @@
                 })
             },
             successHandler() {
-                this.$store.dispatch('postOrderStatus', {payAccount: this.orderInfo.payAccount, id: this.orderInfo.id, status: 4})
+                this.$store.dispatch('postOrderStatus', {payAccount: this.orderInfo.payAccount, id: this.orderInfo.id, status: 4, payType: ''})
                     .then(() => {
                         this.$router.push('carry')
                     }).catch()

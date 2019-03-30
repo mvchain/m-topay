@@ -19,7 +19,7 @@ export function validateCode(data) {
         method: 'get'
     })
 }
-export function orderExist() {
+export function getOrderExist() {
     return request({
         url: '/order/exist',
         method: 'get'
@@ -34,7 +34,7 @@ export function order(data) {
 }
 export function orderStatus(data) {
     return request({
-        url: `/order/${data.id}/status?payAccount=${data.payAccount}&status=${data.status}`,
+        url: `/order/${data.id}/status?payAccount=${data.payAccount}&status=${data.status}&payType=${data.payType}`,
         method: 'post',
     })
 }
@@ -47,6 +47,12 @@ export function idOrderInfo(data) {
 export function shopPayment(data) {
     return request({
         url: `/shop/shop/${data}/payment`,
+        method: 'get'
+    })
+}
+export function payFor(opt) {
+    return request({
+        url: `/order/${opt.id}/status?payAccount=1&status=1`,
         method: 'get'
     })
 }

@@ -35,11 +35,9 @@ service.interceptors.response.use(
     error => {
         if (error.response.data.code === 403) {
             store.dispatch('getReferToken').then(() => {
-                window.location.reload()
             }).catch()
         } else if (error.response.data.code === 401) {
             store.dispatch('FedLogOut').then(() => {
-                alert('账号过期，请重新登录')
                 window.location.hash = "/";
             })
         }

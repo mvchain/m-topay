@@ -53,7 +53,19 @@
         name: 'pay-result',
         data() {
             return {
-                timer: null
+                timer: null,
+                isOver: false,
+            }
+        },
+        watch: {
+            isOver(n) {
+                if(n) {
+                    this.$confirm({
+                        message: '订单完成充值',
+                        confirmBtn: '确定',
+                    })
+                    clearInterval(this.timer)
+                }
             }
         },
         computed: {
@@ -62,16 +74,18 @@
             })
         },
         mounted() {
-            this.$store.dispatch('getOrderInfo', this.orderInfo.id)
-            this.timer = setInterval(() => {
+            this.$store.dispatch('getOrderInfo', this.orderInfo.id).then(() => {
                 if(this.orderInfo.orderStatus === 2) {
-                    this.$confirm({
-                        message: '订单完成充值',
-                        confirmBtn: '确定',
-                    })
-                    clearInterval(this.timer)
+                    this.isOver = true
                 }
-                this.$store.dispatch('getOrderInfo', this.orderInfo.id)
+
+            })
+            this.timer = setInterval(() => {
+                this.$store.dispatch('getOrderInfo', this.orderInfo.id).then(() => {
+                    if(this.orderInfo.orderStatus === 2) {
+                        this.isOver = true
+                    }
+                })
             }, 5000)
         },
         methods: {

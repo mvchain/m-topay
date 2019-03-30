@@ -87,7 +87,7 @@
         methods: {
             payHandler() {
                 if (!this.payAccount.trim()) return;
-                this.$store.dispatch('postOrderStatus', {payAccount: this.payAccount, id: this.orderInfo.id, status: 1})
+                this.$store.dispatch('postOrderStatus', {payAccount: this.payAccount, id: this.orderInfo.id, status: 1, payType: 3})
                     .then(() => {
                         this.$router.push('result')
                     }).catch()

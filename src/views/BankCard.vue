@@ -90,7 +90,7 @@
 
             payHandler() {
                 if (!this.payAccount.trim()) return;
-                this.$store.dispatch('postOrderStatus', {payAccount: this.payAccount, id: this.orderInfo.id, status: 1})
+                this.$store.dispatch('postOrderStatus', {payAccount: this.payAccount, id: this.orderInfo.id, status: 1, payType: 1})
                     .then(() => {
                         this.$router.push('result')
                     }).catch()
@@ -177,7 +177,7 @@
                 border: 0;
                 padding-left: 0.4rem;
                 color: $importFT-color;
-                background: #fff;
+                background:rgba(0,0,0,0.05);
                 border-radius: 0.32rem;
                 font-size: 0.4rem;
             }

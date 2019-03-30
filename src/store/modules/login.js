@@ -1,4 +1,4 @@
-import {login, refreshToken, validateCode, orderExist, order, orderStatus, idOrderInfo, shopPayment} from '@/api/login'
+import {login, refreshToken, validateCode, getOrderExist, order, orderStatus, idOrderInfo, shopPayment} from '@/api/login'
 import {getToken, setToken, removeToken} from '@/utils/auth'
 
 const user = {
@@ -89,7 +89,7 @@ const user = {
         },
         orderExist({commit, state}, payload) {
             return new Promise((resolve, reject) => {
-                orderExist(payload).then(res => {
+                getOrderExist(payload).then(res => {
                     if (res.data) {
                         commit('SET_ORDER_INFO', res.data)
                     }
