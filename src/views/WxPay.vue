@@ -7,8 +7,10 @@
                     <p>剩余收款时间</p>
                 </div>
                 <div class="flex-right">
-                    <p  class="wxpay-top-pay wxpay-top-right">{{icode}}USDT <copy-btn :icode="icode"></copy-btn></p>
-                    <p class="wxpay-top-time wxpay-top-right">15分30秒</p>
+                    <p  class="wxpay-top-pay wxpay-top-right">{{orderInfo.tokenValue}}{{orderInfo.tokenName}} <copy-btn :icode="String(orderInfo.tokenValue)"></copy-btn></p>
+                    <p class="wxpay-top-time wxpay-top-right">
+                        <count-down :endTime="orderInfo.limitTime"></count-down>
+                    </p>
                 </div>
             </div>
             <div class="wxpay-title">请使用微信向该账户转账</div>
@@ -19,43 +21,74 @@
                 </div>
                 <div class="flex-right">
                     <p class="wxpay-top-right">
-                        李某某 <copy-btn :icode="cName"></copy-btn>
+                        {{shopPayInfo.accountName}} <copy-btn :icode="shopPayInfo.accountName"></copy-btn>
                     </p>
-                    <p class="wxpay-top-right">123445 <copy-btn :icode="aliAccount"></copy-btn></p>
+                    <p class="wxpay-top-right">{{shopPayInfo.paymentAccount}} <copy-btn :icode="shopPayInfo.paymentAccount"></copy-btn></p>
                 </div>
             </div>
             <div class="wxpay-code">
                 <div class="wxpay-code-img">
-                    <img :src="codeImg" alt="">
+                    <img :src="shopPayInfo.paymentImage" alt="">
                 </div>
                 <div class="wxpay-code-text">微信收款二维码</div>
             </div>
             <div class="wxpay-account">
-                <input type="text" placeholder="请输入付款账号">
+                <input type="text" placeholder="请输入付款账号" v-model="payAccount">
             </div>
             <div class="wxpay-prompt">请务必输入付款账号，以便进行下一步操作。</div>
         </div>
         <div>
-            <div class="container-btn" @click="$router.push('bank')">确认完成付款</div>
+            <div :class="!payBtnFlag ? 'pay-btn' : ''" class="container-btn" @click="payHandler">确认完成付款</div>
         </div>
     </div>
 </template>
 
 <script>
-    import code from '../assets/logo.png';
     import copyBtn from '../components/CopyBtn';
+    import countDown from '../components/countDown';
+    import { mapGetters } from 'vuex';
     export default {
         name: 'wx-pay',
         data() {
             return {
-                codeImg: code,
-                icode: '1234.6456',
-                cName: '啊啊啊',
-                aliAccount: '18858585858'
+                payBtnFlag: false,
+                payAccount: ''
             }
         },
+        watch: {
+            $route(to, from) {
+                this.$destroy('count-down')
+            },
+            payAccount(n, o) {
+                if (!n.trim()) {
+                    this.payBtnFlag = true;
+                } else {
+                    this.payBtnFlag = false;
+                }
+            }
+        },
+        computed: {
+            ...mapGetters({
+                orderInfo: 'orderInfo',
+                shopPayInfo: 'shopPayInfo',
+            })
+        },
+
         components: {
-            copyBtn
+            copyBtn,
+            'count-down': countDown
+        },
+        mounted() {
+            this.$store.dispatch('getOrderInfo', this.orderInfo.id)
+        },
+        methods: {
+            payHandler() {
+                if (!this.payAccount.trim()) return;
+                this.$store.dispatch('postOrderStatus', {payAccount: this.payAccount, id: this.orderInfo.id, status: 1})
+                    .then(() => {
+                        this.$router.push('result')
+                    }).catch()
+            }
         }
     }
 </script>
@@ -138,6 +171,9 @@
                 border-radius: 0.32rem;
                 font-size: 0.4rem;
             }
+        }
+        & .pay-btn{
+            background:$normalFT-color !important;
         }
 
     }

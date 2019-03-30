@@ -40,7 +40,7 @@ service.interceptors.response.use(
         } else if (error.response.data.code === 401) {
             store.dispatch('FedLogOut').then(() => {
                 alert('账号过期，请重新登录')
-                // window.location.hash = "/";
+                window.location.hash = "/";
             })
         }
         return Promise.reject(error.response.data.message)

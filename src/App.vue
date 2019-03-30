@@ -11,46 +11,32 @@
 </template>
 <script>
     import Header from "@/components/Header.vue";
-    import { setToken } from '@/utils/auth'
+
+
     export default {
         name: 'App',
         components: {
             Header
         },
-        mounted() {
-            // if (this.$route.name === 'login') return;
+        /*mounted() {
+            if (this.$route.name === 'login') return;
             try {
-                // let admin = window.mvc.getAdmin();
-                let admin = {
-                    order: {
-                        amount: 15,
-                        buyUsername: 'buyUsername',
-                        limitTime: 3600,
-                        orderNumber: 'T001',
-                        payAccount: 'qyc@qq.com',
-                        payType: 1,
-                        price: 7,
-                        shopId: 9,
-                        sign: 'lalal',
-                        sellUserId: 100019,
-                        sellUsername: 'sellUsername',
-                        tokenId: '3',
-                        tokenName: 'USDT',
-                        tokenValue: 2,
-                    },
-                    token: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IjE4ODY4NzQxMjM2IiwidXNlcklkIjoxMDAwMjEsInNlcnZpY2UiOiJzZGsiLCJ0eXBlIjoidG9rZW4iLCJleHAiOjE1NTM3NTk3ODR9.Lj6SL7Zz7V9Egc5YniqG2Q3fo8TAuPuDV7K-bGU_48E',
-                    refreshToken: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IjE4ODY4NzQxMjM2IiwidXNlcklkIjoxMDAwMjEsInNlcnZpY2UiOiJzZGsiLCJ0eXBlIjoicmVmcmVzaCIsImV4cCI6MTU1NDM1ODUzNn0.q5nyBr80k1uSt4CPbfhLDMuemK_6zcSNfUr82nATwpA'
-                }
-
+                let admin = window.mvc.getAdmin();
                 if(Object.prototype.toString.call(admin) === '[object Object]') {
                     this.$store.commit('SET_ORDER_INFO', admin.order)
                     this.$store.commit('SET_REFRESH_TOKEN', admin.refreshToken)
                     setToken(admin.token);
                     this.$store.dispatch('orderExist', admin.token).then((res) => {
-                        if (res.data === null) {
-                            this.$router.push('confirm')
+                        if (res.data === null && this.orderInfo === null) {
+                            this.$router.push('carry')
+                        } else if(this.orderInfo) {
+                            if (res.data.orderStatus === 0) {
+                                this.$router.push('order')
+                            } else {
+                                this.$router.push('result')
+                            }
                         } else {
-                            this.$router.push('order')
+                            this.$router.push('confirm')
                         }
                     }).catch((err) => {
 
@@ -60,9 +46,7 @@
             } catch {
                 this.$router.push('/')
             }
-
-
-        }
+        }*/
     }
 </script>
 <style lang="scss">

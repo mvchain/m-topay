@@ -23,17 +23,50 @@
 </template>
 
 <script>
+    import { mapGetters } from 'vuex';
+    import { setToken } from '@/utils/auth'
     export default {
         name: 'login',
+        computed: {
+            ...mapGetters({
+                orderInfo: 'orderInfo',
+            })
+        },
         data() {
             return {
-                cellphone: '18868741236',
-                validCode: '372810',
+                cellphone: '',
+                validCode: '',
                 codeErrorMsg: '',
                 validateTxt: '发送验证码',
                 totalTime: 30,
                 canClick: true,
                 cellphoneError: ''
+            }
+        },
+        mounted() {
+            try {
+                let stradmin = window.mvc.getAdmin()
+                let admin = JSON.parse(stradmin)
+                this.$store.commit('SET_ORDER_INFO', admin.order)
+                this.$store.commit('SET_REFRESH_TOKEN', admin.refreshToken);
+                setToken(admin.token);
+                this.$store.dispatch('orderExist', admin.token).then((res) => {
+                    // 如果没有未完成订单跳转到confirm页面
+                    // 如果有未完成订单，跳转到order页面
+                        // 如果未完成订单状态为已付款，跳转到结果页面
+                    if (res.data === null ) {
+                        this.$router.push('confirm')
+                    } else  {
+                        if (res.data.orderStatus === 0) {
+                            this.$router.push('order')
+                        } else {
+                            this.$router.push('result')
+                        }
+                    }
+                }).catch((err) => {
+
+                })
+            }catch {
             }
         },
         methods: {
@@ -58,13 +91,21 @@
                     this.cellphoneError = '请输入手机号码';
                     return;
                 }
+
                 this.$store.dispatch('Login', {cellphone: this.cellphone, validCode: this.validCode}).then((res) => {
+                    this.setTokenToJava(JSON.stringify(res))
                     this.$store.dispatch('orderExist', res.token).then((res) => {
-                        console.log(res)
-                        if (res.data === null) {
-                            this.$router.push('confirm')
-                        } else {
-                            this.$router.push('order')
+                        if (res.data === null && this.orderInfo === null) {
+                            this.$router.push('carry') // 没有未完成订单且没有订单信息，去结果页
+                        } else { // 如果有订单信息
+                            // 判断是否有未完成订单，
+                            if (!res.data) {
+                                this.$router.push('confirm')
+                            } else if (res.data && res.data.orderStatus === 0) {
+                                this.$router.push('order')
+                            } else {
+                                this.$router.push('result')
+                            }
                         }
                     }).catch()
                 }).catch((err) => {
@@ -78,6 +119,9 @@
                         confirmBtn: '确定'
                     })
                 }).catch()
+            },
+            setTokenToJava(res) {
+                window.mvc.setToken(res)
             }
         }
     }

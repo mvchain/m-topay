@@ -54,8 +54,11 @@
         & .confirm-top{
             width: 6.96rem;
             height:3.06667rem;
+            line-height: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background:#fff;
-            line-height: 2.5rem;
             color:$normalFT-color;
             text-align: center;
         }

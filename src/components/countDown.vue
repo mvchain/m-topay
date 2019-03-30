@@ -3,16 +3,22 @@
 </template>
 
 <script>
+    import { mapGetters } from 'vuex';
     export default {
         name: 'count-down',
         data() {
             return {
-                time: 'aaa',
+                time: '',
                 flag: false,
                 timeFlag: 0,
                 timer: null,
                 count: 0
             }
+        },
+        computed: {
+            ...mapGetters({
+                orderInfo: 'orderInfo'
+            })
         },
         mounted() {
 
@@ -35,6 +41,8 @@
                         return;
                     }
                     this.format(this.count * 1000)
+                    // this.orderInfo.limitTime = this.count * 1000
+
                 }, 1000);
 
             },
@@ -46,6 +54,7 @@
         },
         destoryed() {
             clearInterval(this.timer);
+            console.log(0)
         }
     }
 

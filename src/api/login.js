@@ -32,3 +32,21 @@ export function order(data) {
         data
     })
 }
+export function orderStatus(data) {
+    return request({
+        url: `/order/${data.id}/status?payAccount=${data.payAccount}&status=${data.status}`,
+        method: 'post',
+    })
+}
+export function idOrderInfo(data) {
+    return request({
+        url: '/order/' + data,
+        method: 'get'
+    })
+}
+export function shopPayment(data) {
+    return request({
+        url: `/shop/shop/${data}/payment`,
+        method: 'get'
+    })
+}

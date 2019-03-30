@@ -11,12 +11,12 @@ export default new Router({
             path: '/',
             name: 'login',
             component: Login,
-            meta: { title: '快捷登录/注册' }
+            meta: { title: '快捷登录/注册', back: false }
         },
         {
             path: '/confirm',
             name: 'confirm',
-            meta: { title: '购买数字货币' },
+            meta: { title: '购买数字货币', back: false },
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
@@ -25,7 +25,7 @@ export default new Router({
         {
             path: '/order',
             name: 'order',
-            meta: { title: '订单信息' },
+            meta: { title: '订单信息', back: false },
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
@@ -34,7 +34,7 @@ export default new Router({
         {
             path: '/alipay',
             name: 'alipay',
-            meta: { title: '支付宝付款信息' },
+            meta: { title: '支付宝付款信息', back: true },
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
@@ -52,11 +52,29 @@ export default new Router({
         {
             path: '/bank',
             name: 'bank',
-            meta: { title: '银行卡付款信息' },
+            meta: { title: '银行卡付款信息', back: true },
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
             component: () => import(/* webpackChunkName: "about" */ './views/BankCard.vue')
-        }
+        },
+        {
+            path: '/carry',
+            name: 'carry',
+            meta: { title: '处理结果', back: false },
+            // route level code-splitting
+            // this generates a separate chunk (about.[hash].js) for this route
+            // which is lazy-loaded when the route is visited.
+            component: () => import(/* webpackChunkName: "about" */ './views/CarryOut.vue')
+        },
+        {
+            path: '/result',
+            name: 'result',
+            meta: { title: '订单信息', back: false },
+            // route level code-splitting
+            // this generates a separate chunk (about.[hash].js) for this route
+            // which is lazy-loaded when the route is visited.
+            component: () => import(/* webpackChunkName: "about" */ './views/PayResult.vue')
+        },
     ]
 })

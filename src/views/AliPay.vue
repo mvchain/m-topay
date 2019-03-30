@@ -7,8 +7,10 @@
                     <p>剩余收款时间</p>
                 </div>
                 <div class="flex-right">
-                    <p  class="alipay-top-pay alipay-top-right">{{icode}}USDT <copy-btn :icode="icode"></copy-btn></p>
-                    <p class="alipay-top-time alipay-top-right">15分30秒</p>
+                    <p  class="alipay-top-pay alipay-top-right">{{orderInfo.tokenValue}}{{orderInfo.tokenName}} <copy-btn :icode="String(orderInfo.tokenValue)"></copy-btn></p>
+                    <p class="alipay-top-time alipay-top-right">
+                        <count-down :endTime="orderInfo.limitTime"></count-down>
+                    </p>
                 </div>
             </div>
             <div class="alipay-title">请使用支付宝向该账户转账</div>
@@ -19,44 +21,73 @@
                 </div>
                 <div class="flex-right">
                     <p class="alipay-top-right">
-                        李某某 <copy-btn :icode="cName"></copy-btn>
+                        {{shopPayInfo.accountName}} <copy-btn :icode="shopPayInfo.accountName"></copy-btn>
                     </p>
-                    <p class="alipay-top-right">123445 <copy-btn :icode="aliAccount"></copy-btn></p>
+                    <p class="alipay-top-right">{{shopPayInfo.paymentAccount}} <copy-btn :icode="shopPayInfo.paymentAccount"></copy-btn></p>
                 </div>
             </div>
             <div class="alipay-code">
                 <div class="alipay-code-img">
-                    <img :src="codeImg" alt="">
+                    <img :src="shopPayInfo.paymentImage" alt="">
                 </div>
                 <div class="alipay-code-text">支付宝收款二维码</div>
             </div>
             <div class="alipay-account">
-                <input type="text" placeholder="请输入付款账号">
+                <input type="text" placeholder="请输入付款账号" v-model="payAccount">
             </div>
             <div class="alipay-prompt">请务必输入付款账号，以便进行下一步操作。</div>
         </div>
         <div>
-            <div class="container-btn" @click="$router.push('wxPay')">确认完成付款</div>
+            <div :class="!payBtnFlag ? 'pay-btn' : ''" class="container-btn" @click="payHandler">确认完成付款</div>
         </div>
     </div>
 </template>
 
 <script>
-    import code from '../assets/logo.png';
     import copyBtn from '../components/CopyBtn';
-
+    import countDown from '../components/countDown';
+    import { mapGetters } from 'vuex';
     export default {
         name: 'ali-pay',
+        computed: {
+            ...mapGetters({
+                orderInfo: 'orderInfo',
+                shopPayInfo: 'shopPayInfo',
+            })
+        },
+        watch: {
+            $route(to, from) {
+                this.$destroy('count-down')
+            },
+            payAccount(n, o) {
+                if (!n.trim()) {
+                    this.payBtnFlag = false;
+                } else {
+                    this.payBtnFlag = true;
+                }
+            }
+        },
         data() {
             return {
-                codeImg: code,
-                icode: '1234.6456',
-                cName: '啊啊啊',
-                aliAccount: '18858585858'
+                payBtnFlag: false,
+                payAccount: ''
             }
         },
         components: {
-            copyBtn
+            copyBtn,
+            'count-down': countDown
+        },
+        mounted() {
+            this.$store.dispatch('getOrderInfo', this.orderInfo.id)
+        },
+        methods: {
+            payHandler() {
+                if (!this.payAccount.trim()) return;
+                this.$store.dispatch('postOrderStatus', {payAccount: this.payAccount, id: this.orderInfo.id, status: 1})
+                    .then(() => {
+                        this.$router.push('result')
+                    }).catch()
+            }
         }
     }
 </script>
@@ -142,6 +173,8 @@
                 font-size: 0.4rem;
             }
         }
-
+        & .pay-btn{
+            background:$normalFT-color !important;
+        }
     }
 </style>

@@ -34,57 +34,103 @@
             </div>
             <div class="order-title">选择支付方式</div>
             <div class="order-bottom">
-                <div>
-                    <p>支付宝</p>
-                    <p>微信</p>
-                    <p>银行卡</p>
-                </div>
-                <div>
-                    <p class="order-top-right">O</p>
-                    <p class="order-top-right">O</p>
-                    <p class="order-top-right">O</p>
+                <div v-for="(v, k) in payment" :key="k" class="payment-con">
+                    <div class="payment-con-item">
+                        <svg-icon :class="v.paymentType === 1 ? 'icon-cardpay' : v.paymentType === 3 ?  'icon-wechatpay' : 'icon-alipay'"
+                                  :icon-class="v.paymentType === 1 ? 'cardpay' : v.paymentType === 3 ?  'wechatpay' : 'alipay'"></svg-icon>
+                        <span>{{v.paymentType === 1 ? '银行卡' : v.paymentType === 3 ? '微信' : '支付宝'}}</span>
+                    </div>
+                    <div @click="changePayType(v.paymentType, k)" class="order-top-right payment-con-item">
+                        <svg-icon class="icon-unselected"  :icon-class="paymentType === v.paymentType ? 'selected' : 'unselected'"></svg-icon>
+                    </div>
                 </div>
             </div>
         </div>
         <div>
             <div class="container-btn">
                 <span @click="cancelOrder">取消订单</span>
-                <span @click="$router.push('alipay')">去支付</span>
+                <span @click="goPayHandler">去支付</span>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    import confirmMixin from '../components/Dialog';
+    import countDown from '../components/countDown';
     import { mapGetters } from 'vuex';
-    import countDown from '../components/countDown'
+
     export default {
         name: 'order-info',
-        mixins: [ confirmMixin ],
+
+        data() {
+            return {
+                paymentType: 0,
+                shopPayInfo: {}
+            }
+        },
+        watch: {
+            $route(to, from) {
+                this.$destroy('count-down')
+            }
+        },
+        mounted() {
+            this.getShopData(this.orderInfo.shopId)
+            this.$store.dispatch('getOrderInfo', this.orderInfo.id)
+        },
         components: {
             'count-down': countDown
         },
         computed: {
             ...mapGetters({
                 orderInfo: 'orderInfo',
+                payment: 'payment',
+                timeText: 'timeText'
             })
         },
         methods: {
+            getShopData(id) {
+                this.$store.dispatch('getShopPayment', id)
+            },
             cancelOrder() {
                 this.$confirm({
-                    message: 'lalalal',
+                    message: '确定取消此订单?',
                     cancelBtn: '取消',
                     confirmBtn: '确定',
                     onSuccess: this.successHandler,
-                    cancelHandler: this.cancelHandler
                 })
             },
             successHandler() {
-               console.log('确定')
+                this.$store.dispatch('postOrderStatus', {payAccount: this.orderInfo.payAccount, id: this.orderInfo.id, status: 4})
+                    .then(() => {
+                        this.$router.push('carry')
+                    }).catch()
             },
-            cancelHandler() {
-                console.log('取消')
+            changePayType(v, k) {
+                this.paymentType = v;
+                this.shopPayInfo = this.payment[k]
+            },
+            goPayHandler() {
+                if (this.orderInfo.orderStatus !== 0 ) return;
+                if (this.paymentType === 0) {
+                    this.$confirm({
+                        message: '请选择支付方式',
+                        confirmBtn: '确定',
+                    })
+                    return
+                }
+                this.$store.commit('SET_SHOP_PAY_INFO', this.shopPayInfo)
+                this.$destroy('count-down')
+                switch (this.paymentType) {
+                    case 1:
+                        this.$router.push('bank')
+                        break;
+                    case 2:
+                        this.$router.push('alipay')
+                        break;
+                    default:
+                        this.$router.push('wxPay')
+                }
+
             }
         }
     }
@@ -109,6 +155,7 @@
             }
             & .order-top-right{
                 text-align: right;
+
             }
         }
         .order-top{
@@ -132,6 +179,30 @@
         }
         .order-bottom{
             line-height: 0.95rem;
+            flex-direction: column;
+            .payment-con{
+                display: flex;
+                & .payment-con-item{
+                    flex:1;
+                    display: flex;
+                    align-items: center;
+                }
+                & .order-top-right{
+                    justify-content: flex-end;
+                    & .icon-unselected{
+                        width:0.586667rem;
+                        height:0.586667rem;
+                    }
+                }
+            }
+
+            & .icon-wechatpay,
+            & .icon-alipay,
+            & .icon-cardpay{
+                width:0.6rem;
+                height:0.6rem;
+               margin-right:0.2rem;
+            }
         }
         .order-title{
             font-size:0.346667rem;

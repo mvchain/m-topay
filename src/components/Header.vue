@@ -1,6 +1,6 @@
 <template>
     <div class="vpay-header">
-        <div class="icon-back-con">
+        <div class="icon-back-con" v-show="$route.meta.back" @click="$router.go(-1)">
             <svg-icon class="icon-back"  icon-class="back"></svg-icon>
         </div>
         <div class="vpay-header-title">{{$route.meta.title}}</div>
@@ -28,6 +28,7 @@
             color:$titleFT-color;
             flex:1;
             text-align: center;
+            font-weight:900;
         }
         & .icon-back-con{
             width:0.24rem;

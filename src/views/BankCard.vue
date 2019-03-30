@@ -7,8 +7,10 @@
                     <p>剩余收款时间</p>
                 </div>
                 <div class="flex-right">
-                    <p  class="bank-top-pay bank-top-right">{{icode}}USDT <copy-btn :icode="icode"></copy-btn></p>
-                    <p class="bank-top-time bank-top-right">15分30秒</p>
+                    <p  class="bank-top-pay bank-top-right">{{orderInfo.tokenValue}}{{orderInfo.tokenName}} <copy-btn :icode="String(orderInfo.tokenValue)"></copy-btn></p>
+                    <p class="bank-top-time bank-top-right">
+                        <count-down :endTime="orderInfo.limitTime"></count-down>
+                    </p>
                 </div>
             </div>
             <div class="bank-title">请使用银行卡向该账户转账</div>
@@ -21,44 +23,74 @@
                 </div>
                 <div class="flex-right">
                     <p class="bank-top-right">
-                        {{bankName}} <copy-btn :icode="bankName"></copy-btn>
+                        {{shopPayInfo.bank}} <copy-btn :icode="shopPayInfo.bank"></copy-btn>
                     </p>
-                    <p class="bank-top-right">123445 <copy-btn :icode="bankBranch"></copy-btn></p>
+                    <p class="bank-top-right">{{shopPayInfo.branch}} <copy-btn :icode="shopPayInfo.branch"></copy-btn></p>
                     <p class="bank-top-right">
-                        {{payee}} <copy-btn :icode="payee"></copy-btn>
+                        {{shopPayInfo.accountName}} <copy-btn :icode="shopPayInfo.accountName"></copy-btn>
                     </p>
                     <p class="bank-top-right">
-                        {{bankNumber}} <copy-btn :icode="bankNumber"></copy-btn>
+                        {{shopPayInfo.paymentAccount}} <copy-btn :icode="shopPayInfo.paymentAccount"></copy-btn>
                     </p>
                 </div>
             </div>
 
             <div class="bank-account">
-                <input type="text" placeholder="请输入付款账号">
+                <input type="text" placeholder="请输入付款账号" v-model="payAccount">
             </div>
             <div class="bank-prompt">请务必输入付款账号，以便进行下一步操作。</div>
         </div>
         <div>
-            <div class="container-btn" @click="$router.push('result')">确认完成付款</div>
+            <div :class="!payBtnFlag ? 'pay-btn' : ''" class="container-btn" @click="payHandler">确认完成付款</div>
         </div>
     </div>
 </template>
 
 <script>
     import copyBtn from '../components/CopyBtn';
+    import countDown from '../components/countDown';
+    import { mapGetters } from 'vuex';
     export default {
         name: 'bank-card',
         data() {
             return {
-                icode: '1234.6456',
-                bankName: '农业银行',
-                bankBranch: '杭州支行',
-                payee: '张三',
-                bankNumber: '6554554878548785'
+                payAccount: '',
+                payBtnFlag: false,
             }
         },
+        watch: {
+            $route(to, from) {
+                this.$destroy('count-down')
+            },
+            payAccount(n, o) {
+                if (!n.trim()) {
+                    this.payBtnFlag = true;
+                } else {
+                    this.payBtnFlag = false;
+                }
+            }
+        },
+        computed: {
+            ...mapGetters({
+                orderInfo: 'orderInfo',
+                shopPayInfo: 'shopPayInfo'
+            })
+        },
         components: {
-            copyBtn
+            copyBtn,
+            'count-down': countDown
+        },
+        mounted() {
+            this.$store.dispatch('getOrderInfo', this.orderInfo.id)
+        },
+        methods: {
+            payHandler() {
+                if (!this.payAccount.trim()) return;
+                this.$store.dispatch('postOrderStatus', {payAccount: this.payAccount, id: this.orderInfo.id, status: 1})
+                    .then(() => {
+                        this.$router.push('result')
+                    }).catch()
+            }
         }
     }
 </script>
@@ -146,6 +178,8 @@
                 font-size: 0.4rem;
             }
         }
-
+        & .pay-btn{
+            background:$normalFT-color !important;
+        }
     }
 </style>
