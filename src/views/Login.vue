@@ -35,8 +35,8 @@
         },
         data() {
             return {
-                cellphone: '18806716587',
-                validCode: '555666',
+                cellphone: '',
+                validCode: '',
                 codeErrorMsg: '',
                 validateTxt: '发送验证码',
                 totalTime: 30,
